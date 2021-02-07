@@ -1,0 +1,5 @@
+@author Alailson Andrade <aalailson3@gmail.com> [https://github.com/alailsonko]
+@doc Functions for calculating and converting velocities.
+@reference from <a href="https://github.com/alailsonkoi">Learning Erlang</a>, Alailson Andrade, 2021.
+@copyright 2021 by Alailson Andrade
+@version 0.1
