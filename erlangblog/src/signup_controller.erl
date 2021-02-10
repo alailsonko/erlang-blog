@@ -15,21 +15,21 @@ username_validation(Username) -> Username,
 email_validation(Email) -> Email,
     if 
         Email == <<>> ->
-            <<"{\"error\":\"email is required\"}">>;
+            {false, <<"{\"error\":\"email is required\"}">>};
         true -> 
             true
     end.
 password_validation(Password) -> Password,
     if 
         Password == <<>> ->
-            <<"{\"error\":\"password is required\"}">>;
+            {false, <<"{\"error\":\"password is required\"}">>};
         true -> 
             true
     end.   
 passwordConfirm_validation(PasswordConfirm) -> PasswordConfirm,
     if 
         PasswordConfirm == <<>> ->
-            <<"{\"error\":\"passwordConfirm is required\"}">>;
+            {false, <<"{\"error\":\"passwordConfirm is required\"}">>};
         true -> 
             true
     end.
@@ -51,16 +51,40 @@ init(Req0, State) ->
     io:format("~p.~n", [PasswordConfirm]),
     io:format("~p.~n", [passwordConfirm_validation(PasswordConfirm)]),
     UsernameValid = username_validation(Username),
-    if element(1,UsernameValid) == false -> 
-        Req = cowboy_req:reply(200,
-            #{<<"content-type">> => <<"application/json">>},
-            element(2, UsernameValid),
-            Req1),
-        {ok, Req, State};
-    true ->
-        Req = cowboy_req:reply(200,
-            #{<<"content-type">> => <<"application/json">>},
-            Data,
-            Req1),
-        {ok, Req, State}
+    EmailValid = email_validation(Email),
+    PasswordValid = password_validation(Password),
+    PasswordConfirmValid = passwordConfirm_validation(PasswordConfirm),
+    if 
+    
+        element(1,UsernameValid) == false -> 
+            Req = cowboy_req:reply(200,
+                #{<<"content-type">> => <<"application/json">>},
+                element(2, UsernameValid),
+                Req1),
+            {ok, Req, State};
+        element(1, EmailValid) == false -> 
+            Req = cowboy_req:reply(200,
+                #{<<"content-type">> => <<"application/json">>},
+                element(2, EmailValid),
+                Req1),
+            {ok, Req, State};
+        element(1, PasswordValid) == false -> 
+            Req = cowboy_req:reply(200,
+                #{<<"content-type">> => <<"application/json">>},
+                element(2, PasswordValid),
+                Req1),
+            {ok, Req, State};
+        element(1,PasswordConfirmValid) == false -> 
+            Req = cowboy_req:reply(200,
+                #{<<"content-type">> => <<"application/json">>},
+                element(2, PasswordConfirmValid),
+                Req1),
+            {ok, Req, State};
+        true ->
+            Req = cowboy_req:reply(200,
+                #{<<"content-type">> => <<"application/json">>},
+                Data,
+                Req1),
+            {ok, Req, State}
+
     end.
