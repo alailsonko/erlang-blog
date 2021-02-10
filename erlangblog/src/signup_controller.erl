@@ -26,10 +26,12 @@ password_validation(Password) -> Password,
         true -> 
             true
     end.   
-passwordConfirm_validation(PasswordConfirm) -> PasswordConfirm,
+passwordConfirm_validation(PasswordConfirm, Password) -> PasswordConfirm, Password,
     if 
         PasswordConfirm == <<>> ->
             {false, <<"{\"error\":\"passwordConfirm is required\"}">>};
+        PasswordConfirm =/= Password ->
+            {false, <<"{\"error\":\"Password and passwordConfirm must match\"}">>};
         true -> 
             true
     end.
@@ -49,11 +51,11 @@ init(Req0, State) ->
     io:format("~p.~n", [Password]),
     io:format("~p.~n", [password_validation(Password)]),
     io:format("~p.~n", [PasswordConfirm]),
-    io:format("~p.~n", [passwordConfirm_validation(PasswordConfirm)]),
+    io:format("~p.~n", [passwordConfirm_validation(PasswordConfirm, Password)]),
     UsernameValid = username_validation(Username),
     EmailValid = email_validation(Email),
     PasswordValid = password_validation(Password),
-    PasswordConfirmValid = passwordConfirm_validation(PasswordConfirm),
+    PasswordConfirmValid = passwordConfirm_validation(PasswordConfirm, Password),
     if 
     
         element(1,UsernameValid) == false -> 
