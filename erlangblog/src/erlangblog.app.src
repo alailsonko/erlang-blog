@@ -5,9 +5,13 @@
   {mod, {erlangblog_app, []}},
   {applications,
    [kernel,
+   pgsql_migration,
+   epgsql,
     stdlib,
     cowboy,
-    jsx
+    jsx,
+    liver,
+    bcrypt
    ]},
   {env,[]},
   {modules, []},

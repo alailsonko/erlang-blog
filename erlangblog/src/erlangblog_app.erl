@@ -10,6 +10,19 @@
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
+      Conn = #{
+host => "localhost",
+username => "postgres",
+password => "docker",
+database => "postgres",
+port => 5432,
+timeout => 4000
+},
+      {ok, C} = epgsql:connect(Conn),
+      io:format("~p db connected.~n",[C]),
+      pgsql_migration:use_driver(epgsql),
+      pgsql_migration:migrate(C, "src/migration"),
+      ok = epgsql:close(C),
       Dispatch = cowboy_router:compile([
             {'_', [{"/signup", signup_controller, []}]}
       ]),
